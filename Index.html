@@ -1,0 +1,15 @@
+# 1. Install GitHub CLI (if not already)
+brew install gh        # Mac
+winget install gh      # Windows
+
+# 2. Login
+gh auth login
+# → choose GitHub.com → SSH → paste your key or follow prompts
+
+# 3. Clone, add file, push
+git clone git@github.com:smtnewgh-blip/Cedi-app.git
+cd Cedi-app
+# save the HTML artifact as index.html in this folder, then:
+git add .
+git commit -m "🇬🇭 Launch CediApp"
+git push origin main
