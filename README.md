@@ -1,2 +1,769 @@
 # Cedi-app
 Unique ID decentralized cedi token
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CediApp — Ghana's Digital Future</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--gold:#D4A017;--gold-light:#F5C842;--black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--green:#00B67A;--red:#E63946;--white:#F5F0E8;--muted:#888;--border:rgba(212,160,23,0.2)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Noto Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;font-weight:800}
+.mono{font-family:'Space Mono',monospace}
+
+/* PAGE SYSTEM */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;background:rgba(10,10,10,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--gold);cursor:pointer;letter-spacing:.05em}
+.nav-logo span{color:var(--white)}
+.nav-links{display:flex;gap:1.5rem;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--black)!important;padding:.5rem 1.2rem;border-radius:4px;font-weight:700}
+.nav-cta:hover{background:var(--gold-light)!important}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding:8rem 3rem 4rem;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(212,160,23,.08) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(0,182,122,.06) 0%,transparent 60%),var(--black)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(212,160,23,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,160,23,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%)}
+.hero-content{position:relative;z-index:2;max-width:760px}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;background:rgba(212,160,23,.1);border:1px solid var(--border);color:var(--gold);font-family:'Space Mono',monospace;font-size:.75rem;padding:.4rem .9rem;border-radius:100px;margin-bottom:1.5rem;letter-spacing:.1em}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hero h1{font-size:clamp(2.8rem,7vw,5.5rem);line-height:1.05;letter-spacing:-.02em}
+.hero h1 .gold{color:var(--gold)}
+.hero h1 .outline{-webkit-text-stroke:1.5px var(--gold);color:transparent}
+.hero-sub{font-size:1.1rem;color:#aaa;max-width:560px;margin:1.5rem 0 2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--black);padding:.85rem 2rem;border-radius:6px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,160,23,.3)}
+.btn-secondary{background:transparent;color:var(--white);padding:.85rem 2rem;border-radius:6px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.hero-stats{display:flex;gap:3rem;margin-top:4rem;flex-wrap:wrap}
+.hero-stat-val{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--gold)}
+.hero-stat-label{font-size:.8rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+
+/* SECTIONS */
+section{padding:6rem 3rem}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.8rem}
+.section-title{font-size:clamp(1.8rem,4vw,3rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem}
+.section-desc{color:#999;max-width:560px;font-size:1rem;line-height:1.7;margin-bottom:3rem}
+
+/* FEATURES GRID */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.feature-cell{background:var(--dark);padding:2.2rem;transition:background .2s}
+.feature-cell:hover{background:var(--dark2)}
+.feature-icon{font-size:1.8rem;margin-bottom:1rem}
+.feature-cell h4{font-size:1rem;margin-bottom:.6rem}
+.feature-cell p{font-size:.85rem;color:#888;line-height:1.6}
+.feature-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--gold);background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.2);padding:.2rem .5rem;border-radius:3px;margin-top:.8rem;letter-spacing:.08em}
+
+/* CEDICOIN */
+.coin-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.coin{width:220px;height:220px;border-radius:50%;background:conic-gradient(from 0deg,#D4A017,#F5C842,#D4A017,#8B6914,#D4A017);display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(212,160,23,.2),0 0 120px rgba(212,160,23,.08);animation:coinSpin 12s linear infinite;margin:0 auto}
+@keyframes coinSpin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.coin-inner{width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F5C842,#B8860B);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:coinSpin 12s linear infinite reverse}
+.coin-symbol{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--black)}
+.coin-name-label{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--black);letter-spacing:.15em}
+.coin-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.coin-stat{background:var(--dark2);border:1px solid var(--border);border-radius:8px;padding:1.2rem}
+.coin-stat-val{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold)}
+.coin-stat-key{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+
+/* SUSUBANK */
+.susu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.susu-card{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:1.5rem;transition:all .2s}
+.susu-card:hover{transform:translateY(-3px);border-color:var(--gold)}
+.susu-card-icon{font-size:2rem;margin-bottom:.8rem}
+.susu-card h4{font-size:.95rem;margin-bottom:.5rem}
+.susu-card p{font-size:.8rem;color:#777;line-height:1.5}
+
+/* TIER CARDS */
+.tier-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
+.tier-card{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:1.8rem;transition:all .2s}
+.tier-card:hover{transform:translateY(-4px);border-color:var(--gold)}
+.tier-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:.65rem;padding:.25rem .6rem;border-radius:4px;letter-spacing:.08em;margin-bottom:1rem}
+.tier-1 .tier-badge{background:rgba(212,160,23,.2);color:var(--gold);border:1px solid rgba(212,160,23,.4)}
+.tier-2 .tier-badge{background:rgba(200,200,200,.1);color:#ccc;border:1px solid rgba(200,200,200,.3)}
+.tier-3 .tier-badge{background:rgba(180,100,50,.15);color:#c8825a;border:1px solid rgba(180,100,50,.3)}
+.tier-list{list-style:none;margin-top:.8rem}
+.tier-list li{font-size:.82rem;color:#aaa;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:.5rem}
+.tier-list li::before{content:'→';color:var(--gold);font-size:.7rem}
+
+/* FLAWS */
+.flaws-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.flaw-card{background:var(--black);border:1px solid var(--border);border-radius:10px;padding:1.8rem;position:relative;overflow:hidden}
+.flaw-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.flaw-high::before{background:var(--red)}
+.flaw-med::before{background:var(--gold)}
+.flaw-low::before{background:var(--green)}
+.flaw-severity{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:.25rem .6rem;border-radius:3px;margin-bottom:.8rem;display:inline-block}
+.sev-high{background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.3)}
+.sev-med{background:rgba(212,160,23,.12);color:var(--gold);border:1px solid rgba(212,160,23,.3)}
+.sev-low{background:rgba(0,182,122,.12);color:var(--green);border:1px solid rgba(0,182,122,.3)}
+.flaw-card h4{font-size:1rem;margin-bottom:.5rem}
+.flaw-card p{font-size:.83rem;color:#888;line-height:1.6;margin-bottom:.8rem}
+.flaw-fix{font-size:.8rem;color:var(--green);font-family:'Space Mono',monospace;display:flex;align-items:flex-start;gap:.4rem}
+.flaw-fix::before{content:'✓ FIX:';opacity:.7;white-space:nowrap}
+
+/* ── REGISTRATION PAGE ── */
+.reg-page{background:var(--black);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 1.5rem 3rem}
+.reg-page::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(212,160,23,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,160,23,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.reg-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:var(--gold);text-align:center;margin-bottom:.3rem}
+.reg-logo span{color:var(--white)}
+.reg-tagline{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.15em;text-align:center;margin-bottom:2.5rem}
+.card{background:var(--dark);border:1px solid var(--border);border-radius:14px;padding:2.5rem;width:100%;max-width:520px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.card-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.3rem}
+.card-sub{font-size:.82rem;color:var(--muted);margin-bottom:2rem}
+.steps{display:flex;gap:.4rem;margin-bottom:2rem}
+.step{flex:1;height:3px;border-radius:2px;background:var(--dark2);transition:background .3s}
+.step.active{background:var(--gold)}
+.step.done{background:var(--green)}
+.field{margin-bottom:1.2rem}
+label{display:block;font-size:.78rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:.5rem}
+input,select{width:100%;background:var(--dark2);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans',sans-serif;font-size:.9rem;padding:.75rem 1rem;border-radius:7px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--gold)}
+select option{background:var(--dark2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-form{width:100%;background:var(--gold);color:var(--black);border:none;padding:.9rem;border-radius:7px;font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.btn-form:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-form:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline-form{background:transparent;border:1px solid var(--border);color:var(--white);margin-top:.5rem}
+.btn-outline-form:hover{border-color:var(--gold);color:var(--gold);background:transparent}
+.tier-select{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:1.2rem}
+.tier-opt{border:1px solid var(--border);border-radius:8px;padding:.9rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark2)}
+.tier-opt:hover,.tier-opt.selected{border-color:var(--gold);background:rgba(212,160,23,.08)}
+.tier-opt .t-icon{font-size:1.4rem;margin-bottom:.3rem}
+.tier-opt .t-name{font-size:.75rem;font-family:'Syne',sans-serif;font-weight:700}
+.tier-opt .t-desc{font-size:.65rem;color:var(--muted);margin-top:.2rem}
+.id-preview{background:rgba(0,182,122,.07);border:1px solid rgba(0,182,122,.2);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--green)}
+.id-label{font-size:.65rem;color:var(--muted);margin-bottom:.3rem;letter-spacing:.1em}
+.success-reg{text-align:center;padding:1rem 0}
+.success-reg .check{font-size:3.5rem;margin-bottom:1rem}
+.success-reg h3{font-family:'Syne',sans-serif;font-size:1.3rem;margin-bottom:.5rem;color:var(--green)}
+.success-reg p{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:1rem}
+.uid-box{background:var(--dark2);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'Space Mono',monospace;font-size:.8rem;color:var(--gold);word-break:break-all;margin-bottom:1.2rem}
+.err{background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.25);color:var(--red);border-radius:7px;padding:.75rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
+.back-link{text-align:center;margin-top:1.5rem;font-size:.82rem;color:var(--muted)}
+
+/* ── PITCH DECK PAGE ── */
+.pitch-page{background:var(--black)}
+.slide{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 3rem 3rem;position:relative;overflow:hidden;flex-direction:column}
+.slide-num{position:absolute;bottom:2rem;right:3rem;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted)}
+.slide-nav-dots{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.5rem;z-index:200}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--dark2);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.sdot.active{background:var(--gold);border-color:var(--gold)}
+.cover-flag{font-size:4rem;margin-bottom:1rem;animation:float 4s ease infinite;display:block;text-align:center}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.pitch-h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,8vw,6rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:1rem;text-align:center}
+.pitch-h1 span{color:var(--gold)}
+.cover-sub{font-size:1.1rem;color:#aaa;max-width:500px;margin:0 auto 2rem;line-height:1.7;text-align:center}
+.cover-meta{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap}
+.cmi{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);text-align:center}
+.cmi span{display:block;font-size:1.4rem;font-family:'Syne',sans-serif;color:var(--gold);font-weight:800;margin-bottom:.2rem}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:900px;width:100%}
+.problem-card{background:var(--dark);border:1px solid rgba(230,57,70,.2);border-radius:10px;padding:1.8rem;position:relative}
+.problem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red)}
+.problem-card .icon{font-size:2rem;margin-bottom:1rem}
+.problem-card h4{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:.5rem}
+.problem-card p{font-size:.82rem;color:#888;line-height:1.6}
+.problem-card .stat{font-family:'Space Mono',monospace;font-size:1.2rem;color:var(--red);font-weight:700;margin-top:.8rem}
+.solution-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;max-width:1000px;width:100%;align-items:center}
+.module-row{display:flex;align-items:center;gap:1rem;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:.8rem;transition:border-color .2s}
+.module-row:hover{border-color:var(--gold)}
+.module-icon{font-size:1.4rem;width:40px;text-align:center}
+.module-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700}
+.module-desc{font-size:.78rem;color:#888}
+.market-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;max-width:800px;width:100%}
+.market-card{background:var(--dark);border:1px solid var(--border);border-radius:10px;padding:2rem;text-align:center}
+.market-val{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--gold)}
+.market-label{font-size:.8rem;color:var(--muted);margin-top:.3rem;text-transform:uppercase;letter-spacing:.08em;font-family:'Space Mono',monospace}
+.market-desc{font-size:.83rem;color:#888;margin-top:.8rem;line-height:1.5}
+.rev-table{width:100%;max-width:800px;border-collapse:collapse}
+.rev-table th{text-align:left;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.1em;padding:.6rem 1rem;border-bottom:1px solid var(--border)}
+.rev-table td{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.rev-table tr:hover td{background:rgba(212,160,23,.03)}
+.rev-val{font-family:'Syne',sans-serif;font-weight:700;color:var(--gold)}
+.ask-amount{font-family:'Syne',sans-serif;font-size:clamp(3rem,10vw,7rem);font-weight:800;color:var(--gold);line-height:1;text-align:center}
+.ask-label{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--muted);letter-spacing:.15em;margin-bottom:2rem;text-align:center}
+.use-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:2rem 0;max-width:700px;width:100%}
+.use-item{background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:1.2rem;display:flex;gap:.8rem;align-items:flex-start}
+.use-pct{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold);white-space:nowrap}
+.use-item p{font-size:.82rem;color:#888}
+.slide-header{margin-bottom:3rem;text-align:center}
+.slide-label-p{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem}
+.slide-title-p{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.02em}
+.slide-desc-p{font-size:.95rem;color:#888;margin-top:.5rem;max-width:560px;margin-left:auto;margin-right:auto}
+
+/* CTA */
+.cta-section{background:var(--dark);text-align:center;padding:8rem 3rem;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(212,160,23,.06) 0%,transparent 70%);pointer-events:none}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid var(--border);padding:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+footer .logo{color:var(--gold);font-family:'Syne',sans-serif;font-weight:800}
+footer p{color:#555;font-size:.8rem}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  section,.slide{padding:4rem 1.5rem}
+  .hero{padding:7rem 1.5rem 3rem}
+  .features-grid,.tier-cards,.susu-grid,.problem-grid{grid-template-columns:1fr 1fr}
+  .coin-layout,.solution-layout,.flaws-grid{grid-template-columns:1fr}
+  .use-grid,.market-grid{grid-template-columns:1fr}
+}
+@media(max-width:540px){
+  .features-grid,.tier-cards,.susu-grid,.problem-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAV
+════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Cedi<span>App</span></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="scrollToSection('features')">Features</a></li>
+    <li><a onclick="scrollToSection('susubank')">SusuBank+</a></li>
+    <li><a onclick="showPage('pitch')">Pitch Deck</a></li>
+    <li><a onclick="showPage('register')" class="nav-cta">Register →</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 1: HOME
+════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">🇬🇭 Ghana National Digital Infrastructure</div>
+      <h1>The <span class="gold">Future</span><br>of <span class="outline">Ghana</span><br>is Digital.</h1>
+      <p class="hero-sub">CediApp is a unified national platform combining a gold-backed digital currency, biometric national ID, immigration geofencing, decentralized finance, and digital education — built for every Ghanaian.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="scrollToSection('features')">Explore the System →</button>
+        <button class="btn-secondary" onclick="showPage('pitch')">Investor Deck</button>
+        <button class="btn-primary" onclick="showPage('register')" style="background:var(--green)">Register Now 🇬🇭</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-val">33M+</div><div class="hero-stat-label">Citizens to Onboard</div></div>
+        <div><div class="hero-stat-val">₵1</div><div class="hero-stat-label">Min. Contribution</div></div>
+        <div><div class="hero-stat-val">0%</div><div class="hero-stat-label">MoMo Charges</div></div>
+        <div><div class="hero-stat-val">5-in-1</div><div class="hero-stat-label">National Systems</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" style="background:var(--black)">
+    <div class="container">
+      <div class="section-label">// Platform Features</div>
+      <h2 class="section-title">Everything Ghana Needs</h2>
+      <p class="section-desc">A fully integrated digital ecosystem replacing analog systems — from mobile money to national identity, immigration to education.</p>
+      <div class="features-grid">
+        <div class="feature-cell"><div class="feature-icon">🏦</div><h4>Decentralized Banking</h4><p>Zero MoMo charges. Peer-to-peer exchange backed by CediCoin. Eliminates all intermediaries.</p><div class="feature-tag">DEFI</div></div>
+        <div class="feature-cell"><div class="feature-icon">📡</div><h4>Government WiFi Hotspots</h4><p>Ministry of Communication WiFi at lorry stations, markets, schools and government facilities.</p><div class="feature-tag">INFRASTRUCTURE</div></div>
+        <div class="feature-cell"><div class="feature-icon">🪪</div><h4>Replace Physical Documents</h4><p>One Unique ID replaces Ghana Post GPS, voter ID, NHIS, driver's license, and passport.</p><div class="feature-tag">NATIONAL ID</div></div>
+        <div class="feature-cell"><div class="feature-icon">📍</div><h4>Immigration Geofencing</h4><p>Real-time GPS tracking of borders, overstays, and cross-border movement. Live alerts.</p><div class="feature-tag">IMMIGRATION</div></div>
+        <div class="feature-cell"><div class="feature-icon">🛒</div><h4>Natural Resource Marketplace</h4><p>Invest directly in gold, cocoa, timber, and oil through CediCoin — no middlemen.</p><div class="feature-tag">MARKETPLACE</div></div>
+        <div class="feature-cell"><div class="feature-icon">🎓</div><h4>Digital Education</h4><p>Accredited online modules for all ages. CediCoin rewards. Government WiFi subsidised data.</p><div class="feature-tag">EDUCATION</div></div>
+        <div class="feature-cell"><div class="feature-icon">🏗️</div><h4>Worker Attendance</h4><p>WiFi-based sign-in for government workers. Nurses and teachers rewarded in tokens.</p><div class="feature-tag">GOVERNANCE</div></div>
+        <div class="feature-cell"><div class="feature-icon">💬</div><h4>VOI Communication</h4><p>Free voice and video calling between Unique ID holders. Encrypted by default.</p><div class="feature-tag">COMMUNICATION</div></div>
+        <div class="feature-cell"><div class="feature-icon">📦</div><h4>Drop Shipping for Youth</h4><p>Ghanaian youth sell local resources, handicrafts and talent online legitimately.</p><div class="feature-tag">ECONOMY</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNIQUE ID -->
+  <section style="background:var(--dark)">
+    <div class="container">
+      <div class="section-label">// Citizen Tier System</div>
+      <h2 class="section-title">Ghana Unique ID</h2>
+      <p class="section-desc">A single algorithmically-generated national identifier — combining biometric, geographic, and personal data into one tamper-proof code.</p>
+      <div class="tier-cards">
+        <div class="tier-card tier-1">
+          <div class="tier-badge">TIER 1 — GOLD</div>
+          <h4>Full Citizen</h4>
+          <p style="font-size:.82rem;color:#888">Maximum data. Full access to all services.</p>
+          <ul class="tier-list">
+            <li>Graduate / Professional credentials</li>
+            <li>Employer + Workplace registered</li>
+            <li>Vehicle registration linked</li>
+            <li>Full KYC + biometrics</li>
+            <li>Gold-tier CediCoin rewards</li>
+          </ul>
+        </div>
+        <div class="tier-card tier-2">
+          <div class="tier-badge">TIER 2 — STANDARD</div>
+          <h4>Registered Citizen</h4>
+          <p style="font-size:.82rem;color:#888">Core information. Access to most services.</p>
+          <ul class="tier-list">
+            <li>National ID + DOB + address</li>
+            <li>One verified phone number</li>
+            <li>Student or worker status</li>
+            <li>Basic KYC complete</li>
+          </ul>
+        </div>
+        <div class="tier-card tier-3">
+          <div class="tier-badge">TIER 3 — BASIC</div>
+          <h4>Resident / Visitor</h4>
+          <p style="font-size:.82rem;color:#888">Minimum data. Limited access.</p>
+          <ul class="tier-list">
+            <li>Phone + GPS only</li>
+            <li>Immigration-tracked status</li>
+            <li>Upgrade pathway available</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CEDICOIN -->
+  <section style="background:var(--black)">
+    <div class="container">
+      <div class="section-label">// National Currency</div>
+      <h2 class="section-title">CediCoin</h2>
+      <p class="section-desc">A gold-backed digital currency tying Ghana's natural resource wealth to a secure, tradeable token.</p>
+      <div class="coin-layout">
+        <div>
+          <div class="coin-stats">
+            <div class="coin-stat"><div class="coin-stat-val">Gold-Backed</div><div class="coin-stat-key">Pegged to Ghana Gold Reserves</div></div>
+            <div class="coin-stat"><div class="coin-stat-val">0% Fees</div><div class="coin-stat-key">Internal Citizen Transactions</div></div>
+            <div class="coin-stat"><div class="coin-stat-val">Multi-Chain</div><div class="coin-stat-key">Ethereum / Binance Smart Chain</div></div>
+            <div class="coin-stat"><div class="coin-stat-val">Real Assets</div><div class="coin-stat-key">Gold · Cocoa · Oil · Timber</div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center">
+          <div class="coin"><div class="coin-inner"><div class="coin-symbol">₵</div><div class="coin-name-label">CEDICOIN</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUSUBANK -->
+  <section id="susubank" style="background:var(--dark)">
+    <div class="container">
+      <div class="section-label">// Digital Savings</div>
+      <h2 class="section-title">SusuBank+</h2>
+      <p class="section-desc">Modernising Ghana's traditional community savings culture — secure, transparent, accessible to every trader, woman, student and elder.</p>
+      <div class="susu-grid">
+        <div class="susu-card"><div class="susu-card-icon">💰</div><h4>Savings Circles</h4><p>Create or join trusted peer savings groups with real-time tracking.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">🏥</div><h4>NHIS Integration</h4><p>Life, health, and disability insurance packages directly in-app.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">💳</div><h4>Loans & Credit</h4><p>KYC-based micro-loans. Credit scoring from savings behaviour.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">🔁</div><h4>MoMo Replacement</h4><p>Full P2P transfer between Unique IDs. Zero charges.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">🌍</div><h4>Forex Exchange</h4><p>Buy/sell USD at direct market rates. No bureau de change fees.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">🎮</div><h4>Gamification</h4><p>Badges, streaks, leaderboards. Consistent savers earn CediCoin.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">🛍️</div><h4>POS Integration</h4><p>Pay at physical and digital merchants via Unique ID or QR code.</p></div>
+        <div class="susu-card"><div class="susu-card-icon">📊</div><h4>Investment Portfolio</h4><p>Buy gold, cocoa, oil, and timber tokens. Real-time pricing.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section style="background:var(--black)">
+    <div class="container">
+      <div class="section-label">// Critical Analysis</div>
+      <h2 class="section-title">Flaws & Risk Mitigations</h2>
+      <p class="section-desc">Honest assessment of key vulnerabilities — with recommended mitigations.</p>
+      <div class="flaws-grid">
+        <div class="flaw-card flaw-high"><div class="flaw-severity sev-high">HIGH RISK</div><h4>Data Privacy & Centralised Vulnerability</h4><p>Combining GPS, biometrics, DOB, phone into one database creates a high-value target.</p><div class="flaw-fix">Federated storage; user-held private keys; zero-knowledge proofs for identity verification.</div></div>
+        <div class="flaw-card flaw-high"><div class="flaw-severity sev-high">HIGH RISK</div><h4>Digital Exclusion of Rural / Elderly</h4><p>Replacing physical systems before digital infrastructure matures risks excluding rural populations.</p><div class="flaw-fix">USSD fallback for feature phones; agent network registration; parallel analog systems for 3–5 years.</div></div>
+        <div class="flaw-card flaw-med"><div class="flaw-severity sev-med">MEDIUM RISK</div><h4>CediCoin Regulatory Status</h4><p>No full BOG CBDC framework yet. Privately issued national coin could face legal issues.</p><div class="flaw-fix">Work with Bank of Ghana from day one. Pursue BOG fintech regulatory sandbox licensing.</div></div>
+        <div class="flaw-card flaw-med"><div class="flaw-severity sev-med">MEDIUM RISK</div><h4>Geofencing Surveillance Overreach</h4><p>Real-time GPS tracking could be weaponised for political surveillance.</p><div class="flaw-fix">Independent oversight body; strict 90-day data retention; worker tracking requires union agreement.</div></div>
+        <div class="flaw-card flaw-low"><div class="flaw-severity sev-low">LOW RISK</div><h4>SusuBank+ Liquidity</h4><p>Large simultaneous withdrawals could trigger a run on savings pools.</p><div class="flaw-fix">Minimum 25% liquidity reserve; smart contract auto-pause on anomalous withdrawal patterns.</div></div>
+        <div class="flaw-card flaw-low"><div class="flaw-severity sev-low">LOW RISK</div><h4>ID Generation Collision</h4><p>Siblings sharing the same home could generate near-identical IDs.</p><div class="flaw-fix">Biometric hash as mandatory unique salt; birth order sequence number for shared-address households.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container" style="position:relative;z-index:2">
+      <div class="section-label" style="text-align:center">// Join the Mission</div>
+      <h2 style="font-size:clamp(2rem,5vw,4rem);line-height:1.1;margin-bottom:1.5rem">Build the <span style="color:var(--gold)">Digital</span><br>Republic of Ghana.</h2>
+      <p style="color:#888;font-size:1.05rem;max-width:540px;margin:0 auto 2.5rem">CediApp is seeking government backing, strategic investors, and technical partners.</p>
+      <div class="cta-btns">
+        <button class="btn-primary" onclick="showPage('register')">🇬🇭 Register as Citizen</button>
+        <button class="btn-secondary" onclick="showPage('pitch')">📊 View Pitch Deck</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">CediApp 🇬🇭</div>
+    <p>© 2025 CediApp National Digital Platform</p>
+    <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);background:rgba(212,160,23,.06);border:1px solid var(--border);padding:.3rem .7rem;border-radius:4px">GH·DIGITAL·INFRA·v1.0</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 2: REGISTRATION
+════════════════════════════════════════════ -->
+<div id="page-register" class="page">
+  <div class="reg-page">
+    <div class="reg-logo">Cedi<span>App</span></div>
+    <div class="reg-tagline">// GHANA NATIONAL DIGITAL REGISTRATION</div>
+    <div class="card">
+      <div class="steps">
+        <div class="step active" id="rs1"></div>
+        <div class="step" id="rs2"></div>
+        <div class="step" id="rs3"></div>
+        <div class="step" id="rs4"></div>
+      </div>
+      <!-- STEP 1 -->
+      <div id="rstep1">
+        <div class="card-title">Personal Information</div>
+        <div class="card-sub">Step 1 of 4 — Basic identity details</div>
+        <div class="err" id="rerr1"></div>
+        <div class="row">
+          <div class="field"><label>First Name</label><input id="rfname" placeholder="Kwame"/></div>
+          <div class="field"><label>Last Name</label><input id="rlname" placeholder="Mensah"/></div>
+        </div>
+        <div class="field"><label>Date of Birth</label><input id="rdob" type="date"/></div>
+        <div class="row">
+          <div class="field"><label>Gender</label><select id="rgender"><option value="">Select</option><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
+          <div class="field"><label>Region</label><select id="rregion"><option value="">Select Region</option><option>Greater Accra</option><option>Ashanti</option><option>Western</option><option>Eastern</option><option>Central</option><option>Northern</option><option>Upper East</option><option>Upper West</option><option>Volta</option><option>Brong-Ahafo</option><option>Oti</option><option>Ahafo</option><option>Bono East</option><option>North East</option><option>Savannah</option><option>Western North</option></select></div>
+        </div>
+        <div class="field"><label>Ghana Post GPS Address</label><input id="rgps" placeholder="GA-123-4567"/></div>
+        <button class="btn-form" onclick="rnext(1)">Continue →</button>
+      </div>
+      <!-- STEP 2 -->
+      <div id="rstep2" style="display:none">
+        <div class="card-title">Contact & Security</div>
+        <div class="card-sub">Step 2 of 4 — Phone, email and password</div>
+        <div class="err" id="rerr2"></div>
+        <div class="field"><label>Primary Phone</label><input id="rphone" placeholder="+233 XX XXX XXXX"/></div>
+        <div class="field"><label>Email Address</label><input id="remail" type="email" placeholder="kwame@example.com"/></div>
+        <div class="field"><label>Password</label><input id="rpass" type="password" placeholder="Min. 8 characters"/></div>
+        <div class="field"><label>Confirm Password</label><input id="rpass2" type="password" placeholder="Repeat password"/></div>
+        <div class="row">
+          <button class="btn-form btn-outline-form" onclick="rback(2)">← Back</button>
+          <button class="btn-form" onclick="rnext(2)">Continue →</button>
+        </div>
+      </div>
+      <!-- STEP 3 -->
+      <div id="rstep3" style="display:none">
+        <div class="card-title">Citizen Tier</div>
+        <div class="card-sub">Step 3 of 4 — Select your registration tier</div>
+        <div class="tier-select">
+          <div class="tier-opt" id="rt1" onclick="rselectTier('Gold')"><div class="t-icon">🥇</div><div class="t-name">Gold</div><div class="t-desc">Full data, max access</div></div>
+          <div class="tier-opt" id="rt2" onclick="rselectTier('Standard')"><div class="t-icon">🥈</div><div class="t-name">Standard</div><div class="t-desc">Core data, most services</div></div>
+          <div class="tier-opt" id="rt3" onclick="rselectTier('Basic')"><div class="t-icon">🥉</div><div class="t-name">Basic</div><div class="t-desc">Minimal, limited access</div></div>
+        </div>
+        <div class="id-preview" id="ridPreview" style="display:none">
+          <div class="id-label">YOUR GENERATED UNIQUE ID</div>
+          <div id="ridValue">—</div>
+        </div>
+        <div class="err" id="rerr3"></div>
+        <div class="row">
+          <button class="btn-form btn-outline-form" onclick="rback(3)">← Back</button>
+          <button class="btn-form" onclick="rnext(3)">Continue →</button>
+        </div>
+      </div>
+      <!-- STEP 4 -->
+      <div id="rstep4" style="display:none">
+        <div class="card-title">Confirm Registration</div>
+        <div class="card-sub">Step 4 of 4 — Review and submit</div>
+        <div class="err" id="rerr4"></div>
+        <div id="rsummary" style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;margin-bottom:1.2rem;font-size:.83rem;line-height:2;color:#aaa"></div>
+        <div class="field" style="display:flex;align-items:flex-start;gap:.7rem">
+          <input type="checkbox" id="rconsent" style="width:auto;margin-top:4px"/>
+          <label style="text-transform:none;font-family:'Noto Sans',sans-serif;letter-spacing:0;color:#aaa;font-size:.82rem">I consent to the Ghana National Digital Infrastructure storing my data in accordance with the Data Protection Act, 2012 (Act 843).</label>
+        </div>
+        <button class="btn-form" id="rsubmitBtn" onclick="rsubmit()">🇬🇭 Register My Unique ID</button>
+        <button class="btn-form btn-outline-form" onclick="rback(4)">← Back</button>
+      </div>
+      <!-- SUCCESS -->
+      <div id="rstepSuccess" style="display:none">
+        <div class="success-reg">
+          <div class="check">✅</div>
+          <h3>Registration Successful!</h3>
+          <p>Your Ghana Unique ID has been generated. Welcome to CediApp.</p>
+          <div class="uid-box" id="rfinalUID"></div>
+          <button class="btn-form" onclick="showPage('home')">← Return to CediApp</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-link"><span style="cursor:pointer;color:var(--gold)" onclick="showPage('home')">← Back to CediApp</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 3: PITCH DECK
+════════════════════════════════════════════ -->
+<div id="page-pitch" class="page pitch-page">
+  <div class="slide-nav-dots" id="sdots"></div>
+
+  <div class="slide" id="pslide1" style="background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(212,160,23,.07) 0%,transparent 70%)">
+    <span class="cover-flag">🇬🇭</span>
+    <div class="pitch-h1">The <span>Digital</span><br>Republic</div>
+    <p class="cover-sub">CediApp is Ghana's unified national digital infrastructure — combining identity, currency, finance, immigration, and education into one platform.</p>
+    <div class="cover-meta">
+      <div class="cmi"><span>$2.4B</span>TAM — Ghana Digital Economy</div>
+      <div class="cmi"><span>33M+</span>Citizens to Onboard</div>
+      <div class="cmi"><span>5-in-1</span>National Systems Replaced</div>
+      <div class="cmi"><span>2025</span>Launch Year</div>
+    </div>
+    <div class="slide-num">01 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide2">
+    <div class="slide-header"><div class="slide-label-p">// The Problem</div><div class="slide-title-p">Ghana's Infrastructure is Broken</div><div class="slide-desc-p">Five critical systems are fragmented, analog, and failing 33 million citizens.</div></div>
+    <div class="problem-grid">
+      <div class="problem-card"><div class="icon">🪪</div><h4>No Unified Identity</h4><p>Citizens carry 5+ separate IDs — none of which talk to each other.</p><div class="stat">5 IDs → 1</div></div>
+      <div class="problem-card"><div class="icon">💸</div><h4>MoMo Fees Kill SMEs</h4><p>Rural traders lose 2–5% on every transaction with no alternative.</p><div class="stat">₵2B lost/year</div></div>
+      <div class="problem-card"><div class="icon">🛂</div><h4>Immigration is Blind</h4><p>No real-time tracking of overstays or undocumented workers.</p><div class="stat">40% untracked</div></div>
+      <div class="problem-card"><div class="icon">🏦</div><h4>Unbanked Majority</h4><p>Over 60% of Ghanaians lack formal banking access.</p><div class="stat">60% unbanked</div></div>
+      <div class="problem-card"><div class="icon">📚</div><h4>Education Gap</h4><p>No national digital learning platform. Ghost teachers undetected.</p><div class="stat">34% dropout</div></div>
+      <div class="problem-card"><div class="icon">⛏️</div><h4>Resource Leakage</h4><p>Ghana's gold and cocoa wealth flows through opaque middlemen.</p><div class="stat">$3B/year lost</div></div>
+    </div>
+    <div class="slide-num">02 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide3">
+    <div class="solution-layout">
+      <div>
+        <div class="slide-label-p">// The Solution</div>
+        <div class="slide-title-p" style="text-align:left;margin-bottom:1rem">One Platform.<br><span style="color:var(--gold)">Five Systems.</span></div>
+        <p style="color:#888;font-size:.9rem;line-height:1.7;margin-bottom:1.5rem">CediApp replaces five broken government systems with a single unified digital platform accessible to every Ghanaian.</p>
+        <div style="background:rgba(0,182,122,.07);border:1px solid rgba(0,182,122,.2);border-radius:8px;padding:1rem 1.2rem;font-family:'Space Mono',monospace;font-size:.8rem;color:var(--green)">"One Unique ID replaces everything."</div>
+      </div>
+      <div>
+        <div class="module-row"><div class="module-icon">🪪</div><div><div class="module-name">Ghana Unique ID</div><div class="module-desc">Biometric national identity replacing 5+ documents</div></div></div>
+        <div class="module-row"><div class="module-icon">₵</div><div><div class="module-name">CediCoin</div><div class="module-desc">Gold-backed digital currency, zero transfer fees</div></div></div>
+        <div class="module-row"><div class="module-icon">📍</div><div><div class="module-name">Immigration GPS</div><div class="module-desc">Real-time border tracking & overstay alerts</div></div></div>
+        <div class="module-row"><div class="module-icon">🏦</div><div><div class="module-name">SusuBank+</div><div class="module-desc">Digital savings, loans & insurance for all citizens</div></div></div>
+        <div class="module-row"><div class="module-icon">🎓</div><div><div class="module-name">Digital Education</div><div class="module-desc">Accredited online learning with CediCoin rewards</div></div></div>
+      </div>
+    </div>
+    <div class="slide-num">03 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide4">
+    <div class="slide-header"><div class="slide-label-p">// Market Opportunity</div><div class="slide-title-p">A Nation-Scale Market</div><div class="slide-desc-p">Ghana's digital economy growing at 23% YoY — with no unified infrastructure layer to capture it.</div></div>
+    <div class="market-grid">
+      <div class="market-card"><div class="market-val">$2.4B</div><div class="market-label">Total Addressable Market</div><div class="market-desc">Ghana's combined digital financial services, edtech, and govtech market by 2027.</div></div>
+      <div class="market-card"><div class="market-val">$680M</div><div class="market-label">Serviceable Market (Year 3)</div><div class="market-desc">Registered CediApp users conducting financial and identity services.</div></div>
+      <div class="market-card"><div class="market-val">$12B</div><div class="market-label">ECOWAS Expansion TAM</div><div class="market-desc">West Africa regional expansion. CediApp as the ECOWAS digital identity backbone.</div></div>
+      <div class="market-card"><div class="market-val">23%</div><div class="market-label">Ghana Digital Economy CAGR</div><div class="market-desc">One of the fastest-growing digital economies in Sub-Saharan Africa.</div></div>
+    </div>
+    <div class="slide-num">04 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide5">
+    <div class="slide-header"><div class="slide-label-p">// Business Model</div><div class="slide-title-p">Multiple Revenue Streams</div></div>
+    <table class="rev-table">
+      <tr><th>STREAM</th><th>MODEL</th><th>YEAR 1</th><th>YEAR 3</th><th>YEAR 5</th></tr>
+      <tr><td>🏦 SusuBank+ Loans</td><td>2.5% origination fee</td><td class="rev-val">$1.2M</td><td class="rev-val">$8.4M</td><td class="rev-val">$24M</td></tr>
+      <tr><td>₵ CediCoin Exchange</td><td>0.5% forex spread</td><td class="rev-val">$0.8M</td><td class="rev-val">$6.2M</td><td class="rev-val">$18M</td></tr>
+      <tr><td>🏛️ Government License</td><td>Annual SaaS + per-citizen</td><td class="rev-val">$3M</td><td class="rev-val">$9M</td><td class="rev-val">$15M</td></tr>
+      <tr><td>🛒 Marketplace Commission</td><td>1.5% on resource trades</td><td class="rev-val">$0.4M</td><td class="rev-val">$4.8M</td><td class="rev-val">$14M</td></tr>
+      <tr><td>🎓 Education Certification</td><td>Per certificate issued</td><td class="rev-val">$0.3M</td><td class="rev-val">$2.1M</td><td class="rev-val">$6M</td></tr>
+      <tr style="border-top:1px solid var(--gold)"><td><b>TOTAL</b></td><td></td><td class="rev-val" style="font-size:1.1rem">$5.9M</td><td class="rev-val" style="font-size:1.1rem">$32.3M</td><td class="rev-val" style="font-size:1.1rem">$82M</td></tr>
+    </table>
+    <div class="slide-num">05 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide6">
+    <div class="slide-header"><div class="slide-label-p">// The Ask</div></div>
+    <div class="ask-amount">$5M</div>
+    <div class="ask-label">SEED ROUND — SERIES A</div>
+    <p style="color:#888;font-size:.9rem;line-height:1.7;margin-bottom:1.5rem;text-align:center;max-width:500px">Seeking $5M to fund the national pilot, government licensing, CediCoin mainnet launch, and team expansion across 3 Ghanaian regions.</p>
+    <div class="use-grid">
+      <div class="use-item"><div class="use-pct">35%</div><div><b style="font-family:'Syne',sans-serif">Technology</b><p>Backend, blockchain, biometric, WiFi hardware</p></div></div>
+      <div class="use-item"><div class="use-pct">25%</div><div><b style="font-family:'Syne',sans-serif">Government Relations</b><p>Licensing, MOU negotiations, regulatory compliance</p></div></div>
+      <div class="use-item"><div class="use-pct">20%</div><div><b style="font-family:'Syne',sans-serif">Team & Operations</b><p>Engineering, legal, compliance, agent network</p></div></div>
+      <div class="use-item"><div class="use-pct">20%</div><div><b style="font-family:'Syne',sans-serif">Marketing & Onboarding</b><p>National registration drive, media, ambassadors</p></div></div>
+    </div>
+    <div class="slide-num">06 / 07</div>
+  </div>
+
+  <div class="slide" id="pslide7">
+    <div style="text-align:center;max-width:600px">
+      <span style="font-size:3rem">🇬🇭</span>
+      <div class="slide-label-p" style="margin-top:1rem">// Get In Touch</div>
+      <div class="slide-title-p">Let's Build Ghana's<br><span style="color:var(--gold)">Digital Future.</span></div>
+      <p style="color:#888;margin-top:1rem;line-height:1.7">CediApp is seeking government partners, strategic investors, and technical co-builders. We are building the most ambitious national digital infrastructure project in West Africa.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:1rem;color:var(--gold);margin:1.5rem 0">invest@cediapp.gh</div>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="showPage('register')">Register as Citizen →</button>
+        <button class="btn-secondary" onclick="showPage('home')">← Back to Home</button>
+      </div>
+      <div style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:2rem">
+        <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:.5rem 1rem;font-size:.72rem;font-family:'Space Mono',monospace;color:var(--muted)">🏦 BOG SANDBOX APPLICANT</div>
+        <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:.5rem 1rem;font-size:.72rem;font-family:'Space Mono',monospace;color:var(--muted)">🇬🇭 NDC DIGITAL AGENDA</div>
+        <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:.5rem 1rem;font-size:.72rem;font-family:'Space Mono',monospace;color:var(--muted)">⛓️ ETHEREUM + BSC</div>
+      </div>
+    </div>
+    <div class="slide-num">07 / 07</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ── PAGE ROUTING ──────────────────────────────
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  window.scrollTo(0,0);
+}
+function scrollToSection(id){
+  showPage('home');
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  },100);
+}
+
+// ── PITCH DECK DOTS ───────────────────────────
+const pslides = document.querySelectorAll('[id^="pslide"]');
+const sdotsEl = document.getElementById('sdots');
+pslides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='sdot'+(i===0?' active':'');
+  d.onclick=()=>pslides[i].scrollIntoView({behavior:'smooth'});
+  sdotsEl.appendChild(d);
+});
+const pobs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const i=[...pslides].indexOf(e.target);
+      document.querySelectorAll('.sdot').forEach((d,j)=>d.classList.toggle('active',j===i));
+    }
+  });
+},{threshold:.5});
+pslides.forEach(s=>pobs.observe(s));
+
+// ── SUPABASE CONFIG ───────────────────────────
+// 👉 Replace these with your Supabase project details
+const SUPABASE_URL='https://YOUR_PROJECT.supabase.co';
+const SUPABASE_KEY='YOUR_ANON_KEY';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// ── REGISTRATION LOGIC ────────────────────────
+const regionCodes={
+  'Greater Accra':'ACC','Ashanti':'ASH','Western':'WES','Eastern':'EAS',
+  'Central':'CEN','Northern':'NOR','Upper East':'UPE','Upper West':'UPW',
+  'Volta':'VOL','Brong-Ahafo':'BAH','Oti':'OTI','Ahafo':'AHF',
+  'Bono East':'BOE','North East':'NEA','Savannah':'SAV','Western North':'WNO'
+};
+let rTier='', rUID='';
+
+function rv(id){return document.getElementById(id)?.value?.trim()||''}
+function rshowErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block'}
+function rhideErr(id){document.getElementById(id).style.display='none'}
+
+function rgenUID(){
+  const rc=regionCodes[rv('rregion')]||'GHA';
+  const dob=rv('rdob').replace(/-/g,'');
+  const seq=Math.floor(1000+Math.random()*9000);
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const chk=Array.from({length:5},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  return `GH·${rc}·${dob}·${seq}·${chk}`;
+}
+
+function rselectTier(t){
+  rTier=t;
+  ['rt1','rt2','rt3'].forEach(id=>document.getElementById(id).classList.remove('selected'));
+  const map={Gold:'rt1',Standard:'rt2',Basic:'rt3'};
+  document.getElementById(map[t]).classList.add('selected');
+  rUID=rgenUID();
+  document.getElementById('ridValue').textContent=rUID;
+  document.getElementById('ridPreview').style.display='block';
+}
+
+function rnext(step){
+  if(step===1){
+    rhideErr('rerr1');
+    if(!rv('rfname')||!rv('rlname')||!rv('rdob')||!rv('rgender')||!rv('rregion')||!rv('rgps'))
+      return rshowErr('rerr1','Please fill in all fields.');
+    rshow(2);
+  } else if(step===2){
+    rhideErr('rerr2');
+    if(!rv('rphone')||!rv('remail')||!rv('rpass')||!rv('rpass2'))
+      return rshowErr('rerr2','Please fill in all fields.');
+    if(rv('rpass')!==rv('rpass2')) return rshowErr('rerr2','Passwords do not match.');
+    if(rv('rpass').length<8) return rshowErr('rerr2','Password must be at least 8 characters.');
+    rshow(3);
+  } else if(step===3){
+    rhideErr('rerr3');
+    if(!rTier) return rshowErr('rerr3','Please select a citizen tier.');
+    document.getElementById('rsummary').innerHTML=`
+      <b style="color:var(--gold)">Name:</b> ${rv('rfname')} ${rv('rlname')}<br>
+      <b style="color:var(--gold)">DOB:</b> ${rv('rdob')}<br>
+      <b style="color:var(--gold)">Region:</b> ${rv('rregion')}<br>
+      <b style="color:var(--gold)">GPS:</b> ${rv('rgps')}<br>
+      <b style="color:var(--gold)">Phone:</b> ${rv('rphone')}<br>
+      <b style="color:var(--gold)">Email:</b> ${rv('remail')}<br>
+      <b style="color:var(--gold)">Tier:</b> ${rTier}<br>
+      <b style="color:var(--gold)">Unique ID:</b> <span style="color:var(--green);font-family:'Space Mono',monospace">${rUID}</span>
+    `;
+    rshow(4);
+  }
+}
+
+function rback(step){
+  if(step===2)rshow(1);
+  else if(step===3)rshow(2);
+  else if(step===4)rshow(3);
+}
+
+function rshow(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('rstep'+i).style.display=i===n?'block':'none';
+    const s=document.getElementById('rs'+i);
+    if(i<n)s.className='step done';
+    else if(i===n)s.className='step active';
+    else s.className='step';
+  });
+}
+
+async function rsubmit(){
+  rhideErr('rerr4');
+  if(!document.getElementById('rconsent').checked)
+    return rshowErr('rerr4','Please accept the data consent agreement.');
+  const btn=document.getElementById('rsubmitBtn');
+  btn.disabled=true; btn.textContent='Registering...';
+  try{
+    const {error:authErr}=await sb.auth.signUp({email:rv('remail'),password:rv('rpass')});
+    if(authErr) throw authErr;
+    const {error:dbErr}=await sb.from('citizens').insert([{
+      unique_id:rUID,first_name:rv('rfname'),last_name:rv('rlname'),
+      date_of_birth:rv('rdob'),gender:rv('rgender'),region:rv('rregion'),
+      gps_address:rv('rgps'),phone:rv('rphone'),email:rv('remail'),
+      tier:rTier,created_at:new Date().toISOString()
+    }]);
+    if(dbErr) throw dbErr;
+    document.getElementById('rfinalUID').textContent=rUID;
+    [1,2,3,4].forEach(i=>document.getElementById('rstep'+i).style.display='none');
+    document.getElementById('rstepSuccess').style.display='block';
+    document.querySelectorAll('.step').forEach(s=>s.className='step done');
+  } catch(err){
+    rshowErr('rerr4',err.message||'Registration failed. Please try again.');
+    btn.disabled=false; btn.textContent='🇬🇭 Register My Unique ID';
+  }
+}
+</script>
+</body>
+</html>
