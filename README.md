@@ -8,6 +8,10 @@ Unique ID decentralized cedi token
 <title>CediApp — Ghana's Digital Future</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 <style>
 :root{--gold:#D4A017;--gold-light:#F5C842;--black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--green:#00B67A;--red:#E63946;--white:#F5F0E8;--muted:#888;--border:rgba(212,160,23,0.2)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
