@@ -1,0 +1,21 @@
+{
+  "name": "cedi-app",
+  "version": "1.0.0",
+  "description": "Unique ID decentralized cedi token",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "cedi",
+    "blockchain",
+    "ghana"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}

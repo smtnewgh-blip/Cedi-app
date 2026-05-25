@@ -18,8 +18,8 @@
 
 # Node modules (if using npm scripts)
 node_modules/
-package-lock.json
-yarn.lock
+# Note: Lock files (package-lock.json, yarn.lock, pnpm-lock.yaml) should be committed
+# to ensure consistent dependency versions across environments
 
 # Build outputs
 dist/
