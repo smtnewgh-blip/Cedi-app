@@ -1,0 +1,25 @@
+{
+  "name": "cedi-app",
+  "version": "1.0.0",
+  "description": "Ghana's Digital Future - Unique ID decentralized cedi token",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Static HTML - no build required'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smtnewgh-blip/Cedi-app.git"
+  },
+  "keywords": [
+    "ghana",
+    "cedi",
+    "digital-identity",
+    "blockchain"
+  ],
+  "author": "smtnewgh-blip",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}
