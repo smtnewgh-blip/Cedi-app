@@ -229,6 +229,11 @@ footer p{color:#555;font-size:.8rem}
   .features-grid,.tier-cards,.susu-grid,.problem-grid{grid-template-columns:1fr}
 }
 </style>
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 
