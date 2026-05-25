@@ -1,0 +1,1 @@
+{\n  "buildCommand": "npm run build",\n  "outputDirectory": ".",\n  "installCommand": "npm install",\n  "framework": "other",\n  "env": [\n    {\n      "key": "VITE_SUPABASE_URL",\n      "value": "@VITE_SUPABASE_URL"\n    },\n    {\n      "key": "VITE_SUPABASE_ANON_KEY",\n      "value": "@VITE_SUPABASE_ANON_KEY"\n    }\n  ]\n}\n
