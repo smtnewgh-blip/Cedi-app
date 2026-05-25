@@ -765,5 +765,9 @@ async function rsubmit(){
   }
 }
 </script>
+<script type="module">
+  import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@latest/dist/index.mjs';
+  injectSpeedInsights();
+</script>
 </body>
 </html>
