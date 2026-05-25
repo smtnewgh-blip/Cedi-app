@@ -1,0 +1,26 @@
+{
+  "name": "cedi-app",
+  "version": "1.0.0",
+  "description": "Unique ID decentralized cedi token",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "test": "echo \"No tests specified\" && exit 0",
+    "lint": "echo \"No linter configured\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smtnewgh-blip/Cedi-app.git"
+  },
+  "keywords": [
+    "ghana",
+    "cedi",
+    "digital-identity",
+    "blockchain"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/speed-insights": "^1.0.10"
+  }
+}
