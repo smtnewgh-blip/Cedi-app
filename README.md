@@ -229,6 +229,11 @@ footer p{color:#555;font-size:.8rem}
   .features-grid,.tier-cards,.susu-grid,.problem-grid{grid-template-columns:1fr}
 }
 </style>
+<!-- Vercel Speed Insights -->
+<script type="module">
+  import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@2.0.0/dist/index.mjs';
+  injectSpeedInsights();
+</script>
 </head>
 <body>
 
