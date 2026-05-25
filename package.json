@@ -1,0 +1,25 @@
+{
+  "name": "cedi-app",
+  "version": "1.0.0",
+  "description": "Ghana's Digital Future - CediApp",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "serve": "python3 -m http.server 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smtnewgh-blip/Cedi-app.git"
+  },
+  "keywords": [
+    "cedi",
+    "ghana",
+    "digital",
+    "currency"
+  ],
+  "author": "smtnewgh-blip",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}
