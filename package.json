@@ -57,5 +57,8 @@
   "bugs": {
     "url": "https://github.com/smtnewgh-blip/Cedi-app/issues"
   },
-  "homepage": "https://github.com/smtnewgh-blip/Cedi-app#readme"
+  "homepage": "https://github.com/smtnewgh-blip/Cedi-app#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
 }
