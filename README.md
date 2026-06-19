@@ -1,74 +1,65 @@
 # CediApp — Ghana's Digital Future
 
-> Unique ID decentralized cedi token platform for Ghana's digital identity infrastructure.
+> Unified repository: Unique ID decentralized cedi token platform + Next.js/Supabase web app.
 
-## Overview
+## Repository Structure
 
-CediApp is a static web application that provides a decentralized unique ID system for Ghanaian citizens, integrating with Supabase for secure data storage and authentication.
+```
+/                        ← CediApp static site (Ghana Unique ID platform)
+  index.html             ← Main app (vanilla HTML/JS + Supabase)
+  vercel.json            ← Vercel deployment config (static site)
+  package.json           ← Dependencies
+  docs/                  ← Documentation
+  DEPLOYMENT.md          ← Deployment guide
+  CHANGELOG.md           ← Version history
 
-## Features
+/nextjs-app/             ← Next.js 15 + Supabase full-stack app
+  app/                   ← Next.js App Router pages
+  components/            ← React components
+  lib/                   ← Supabase client utilities
+  middleware.ts          ← Auth session middleware
+  next.config.ts         ← Next.js configuration
+  vercel.json            ← Vercel deployment config (Next.js)
+```
 
-- Unique ID generation for Ghanaian citizens
-- Supabase-powered authentication and database
-- Vercel Speed Insights integration
-- Fully responsive design
+## Projects
+
+### 1. CediApp Static Site (root)
+
+A static web application providing a decentralized unique ID system for Ghanaian citizens.
+
+**Tech:** Vanilla HTML/JS, Supabase JS SDK, Vercel Speed Insights
+
+**Deploy:** Connect root directory to Vercel. Add env vars:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+### 2. Next.js Supabase App (`/nextjs-app`)
+
+A full-stack Next.js 15 application with Supabase authentication, AI chat, and protected routes.
+
+**Tech:** Next.js 15, React 19, TypeScript, Supabase SSR, Tailwind CSS, OpenAI
+
+**Deploy:** Connect `/nextjs-app` directory to Vercel. Add env vars:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `OPENAI_API_KEY`
 
 ## Quick Start
 
-### Prerequisites
+### Static Site
+```bash
+npm install
+npm run dev   # serves on http://localhost:8000
+```
 
-- Node.js 18+
-- A [Supabase](https://supabase.com) account (free tier works)
-
-### Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/smtnewgh-blip/Cedi-app.git
-   cd Cedi-app
-   ```
-
-2. Create a `.env.local` file with your Supabase credentials:
-   ```env
-   VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-   VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY
-   ```
-
-3. Install dependencies and run locally:
-   ```bash
-   npm install
-   npm run dev
-   ```
-
-4. Open [http://localhost:8000](http://localhost:8000)
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Connect your GitHub repository to [Vercel](https://vercel.com)
-2. Add environment variables in Vercel dashboard:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-3. Deploy — Vercel will auto-detect the static site configuration
-
-### Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key |
-
-## Documentation
-
-- [Setup Guide](docs/SETUP.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [API Reference](docs/API.md)
-- [Security](docs/SECURITY.md)
-- [Testing](docs/TESTING.md)
-- [Deployment Guide](DEPLOYMENT.md)
-- [Contributing](CONTRIBUTING.md)
-- [Changelog](CHANGELOG.md)
+### Next.js App
+```bash
+cd nextjs-app
+npm install
+cp .env.example .env.local   # fill in your credentials
+npm run dev   # serves on http://localhost:3000
+```
 
 ## License
 
