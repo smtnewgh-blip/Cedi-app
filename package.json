@@ -1,0 +1,41 @@
+{
+  "name": "cedi-app",
+  "version": "1.0.0",
+  "description": "Unique ID decentralized cedi token - Ghana's Digital Future",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve . -l 8000",
+    "build": "echo 'Static site - no build needed'",
+    "start": "serve . -l 8080",
+    "lint": "eslint . --ext .html,.js"
+  },
+  "keywords": [
+    "ghana",
+    "unique-id",
+    "blockchain",
+    "fintech",
+    "cedi",
+    "banking"
+  ],
+  "author": "smtnewgh-blip",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smtnewgh-blip/Cedi-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smtnewgh-blip/Cedi-app/issues"
+  },
+  "homepage": "https://cedi-app.vercel.app",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
