@@ -9,8 +9,12 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Cedi App - Next.js & Supabase",
-  description: "Professional Next.js + Supabase application with AI integration",
+  title: { default: "CediApp | Explore with confidence", template: "%s | CediApp" },
+  description: "A clear, guided CediApp experience for exploring digital-finance concepts.",
+  applicationName: "CediApp",
+  openGraph: { title: "CediApp | Explore with confidence", description: "A clear, guided CediApp experience for exploring digital-finance concepts.", type: "website" },
+  twitter: { card: "summary", title: "CediApp | Explore with confidence", description: "A clear, guided CediApp experience for exploring digital-finance concepts." },
+  robots: { index: true, follow: true },
 };
 
 const geistSans = Geist({
