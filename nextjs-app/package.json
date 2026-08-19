@@ -47,7 +47,9 @@
     "typescript": "^5.5.0"
   },
   "engines": {
-    "node": ">=18.17.0",
-    "npm": ">=9.0.0"
-  }
+    "node": ">=18",
+    "npm": ">=9.0.0",
+    "pnpm": ">=9 <10"
+  },
+  "packageManager": "pnpm@9.15.4"
 }
