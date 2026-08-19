@@ -34,8 +34,6 @@
   "bugs": {
     "url": "https://github.com/smtnewgh-blip/Cedi-app/issues"
   },
-  "homepage": "https://cedi-app.vercel.app",
-  "dependencies": {
-    "@vercel/speed-insights": "^2.0.0"
-  }
+  "homepage": "https://smtnewgh-blip.github.io/Cedi-app/",
+  "dependencies": {}
 }
