@@ -17,6 +17,7 @@ export function SiteHeader() {
           <Button asChild size="sm"><Link href="/auth/sign-up">Get started</Link></Button>
         </div>
       </nav>
+      <details className="border-t px-5 py-3 text-sm md:hidden"><summary className="cursor-pointer font-medium">Menu</summary><div className="mt-3 flex flex-col gap-3 text-muted-foreground"><Link href="#features">Explore</Link><Link href="#how-it-works">How it works</Link><Link href="#support">Support</Link></div></details>
     </header>
   );
 }

@@ -17,7 +17,13 @@ export function ProfileCompletion({ initialName }: ProfileCompletionProps) {
     event.preventDefault();
     setStatus("saving");
     const supabase = createClient();
-    const { error } = await supabase.auth.updateUser({ data: { full_name: name.trim() } });
+    const displayName = name.trim();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setStatus("error"); return; }
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, display_name: displayName || null }, { onConflict: "id" });
+    if (!error) await supabase.auth.updateUser({ data: { full_name: displayName } });
     setStatus(error ? "error" : "saved");
   }
 

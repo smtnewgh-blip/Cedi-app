@@ -1,5 +1,6 @@
 import { generateAIResponse } from "@/lib/openai";
 import { createClient } from "@/lib/supabase/server";
+import { takeRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 const MAX_MESSAGE_LENGTH = 2_000;
@@ -13,6 +14,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  const rateLimit = takeRateLimit(data.claims.sub);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { ...NO_STORE_HEADERS, "Retry-After": String(rateLimit.retryAfterSeconds) } },
     );
   }
 

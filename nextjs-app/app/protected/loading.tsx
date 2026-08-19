@@ -1,0 +1,1 @@
+export default function Loading() { return <div className="space-y-6" aria-busy="true" aria-label="Loading your dashboard"><div className="h-52 animate-pulse rounded-3xl bg-muted" /><div className="grid gap-4 md:grid-cols-3">{[1, 2, 3].map((item) => <div key={item} className="h-36 animate-pulse rounded-2xl bg-muted" />)}</div></div>; }
