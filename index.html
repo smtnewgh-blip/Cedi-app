@@ -737,10 +737,13 @@ function rshow(n){
   });
 }
 
+const SB_NOT_CONFIGURED=(SUPABASE_URL||'').includes('YOUR_PROJECT')||!SUPABASE_KEY||SUPABASE_KEY.includes('YOUR_');
 async function rsubmit(){
   rhideErr('rerr4');
   if(!document.getElementById('rconsent').checked)
     return rshowErr('rerr4','Please accept the data consent agreement.');
+  if(SB_NOT_CONFIGURED)
+    return rshowErr('rerr4','🔧 Database not connected yet. Registration is live on this preview — connect your Supabase project (docs/SUPABASE.md) to enable real sign-ups.');
   const btn=document.getElementById('rsubmitBtn');
   btn.disabled=true; btn.textContent='Registering...';
   try{
