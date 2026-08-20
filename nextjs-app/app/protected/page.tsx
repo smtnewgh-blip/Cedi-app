@@ -1,43 +1,22 @@
-import { redirect } from "next/navigation";
-
+import { ArrowUpRight, CheckCircle2, CircleHelp, CreditCard, ShieldCheck, WalletCards } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
-import { Suspense } from "react";
+import { AiChat } from "@/components/ai-chat";
+import { ProfileCompletion } from "@/components/profile-completion";
+import { Button } from "@/components/ui/button";
 
-async function UserDetails() {
+const actions = [{ label: "Explore your wallet", detail: "View your demo balance and activity", icon: WalletCards }, { label: "Complete your profile", detail: "Add a display name for this experience", icon: ShieldCheck }, { label: "Get support", detail: "Contact the CediApp team", icon: CircleHelp }];
+const activity = ["Account dashboard created", "Demo wallet experience ready", "Security settings available"];
+
+export default async function ProtectedPage() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
-
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  }
-
-  return JSON.stringify(data.claims, null, 2);
-}
-
-export default function ProtectedPage() {
-  return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          <Suspense>
-            <UserDetails />
-          </Suspense>
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
-      </div>
-    </div>
-  );
+  const { data } = await supabase.auth.getClaims();
+  const fallbackName = typeof data?.claims?.user_metadata?.full_name === "string" ? data.claims.user_metadata.full_name : "";
+  const { data: profile } = await supabase.from("profiles").select("display_name").maybeSingle();
+  const name = profile?.display_name || fallbackName;
+  return <div className="space-y-8"><section className="rounded-3xl bg-primary p-7 text-primary-foreground md:p-10"><p className="text-sm font-medium text-primary-foreground/75">CediApp dashboard</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">Welcome{name ? `, ${name}` : ""}. You are in control.</h1><p className="mt-3 max-w-xl text-primary-foreground/80">This is a demo dashboard for exploring the CediApp experience. Balances and activity below are illustrative, not real financial records.</p><Button asChild className="mt-6 bg-primary-foreground text-primary hover:bg-primary-foreground/90"><Link href="#actions">Continue setup <ArrowUpRight /></Link></Button></section>
+  <section className="grid gap-4 md:grid-cols-3"><article className="rounded-2xl border bg-card p-6 shadow-sm md:col-span-2"><div className="flex items-start justify-between"><div><p className="text-sm text-muted-foreground">Demo wallet balance</p><p className="mt-2 text-3xl font-semibold">GH₵ 2,450.00</p></div><CreditCard className="size-6 text-primary" /></div><p className="mt-5 text-sm text-muted-foreground">Illustrative only — CediApp does not hold or move funds in this demo.</p></article><article className="rounded-2xl border bg-card p-6 shadow-sm"><p className="text-sm text-muted-foreground">Profile status</p><div className="mt-4 flex items-center gap-2 font-medium"><CheckCircle2 className="size-5 text-primary" /> Ready to explore</div><p className="mt-3 text-sm text-muted-foreground">Add your preferences when you are ready.</p></article></section>
+  <section id="actions"><p className="text-sm font-medium text-primary">Next actions</p><h2 className="mt-1 text-2xl font-semibold">Keep your journey moving</h2><div className="mt-4 grid gap-4 md:grid-cols-3">{actions.map(({ label, detail, icon: Icon }) => <article key={label} className="rounded-2xl border bg-card p-6 shadow-sm"><Icon className="size-5 text-primary" /><h3 className="mt-5 font-semibold">{label}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p><Button asChild className="mt-5 px-0" variant="link"><a href={label === "Get support" ? "mailto:support@cediapp.space" : "#profile"}>Open <ArrowUpRight /></a></Button></article>)}</div></section>
+  <section className="grid gap-5 lg:grid-cols-2"><div id="profile" className="space-y-5"><ProfileCompletion initialName={name} /><article className="rounded-2xl border bg-card p-6 shadow-sm"><p className="text-sm font-medium text-primary">Demo activity</p><h2 className="mt-1 text-xl font-semibold">Recent progress</h2><ul className="mt-5 space-y-4">{activity.map((item) => <li key={item} className="flex items-center gap-3 text-sm"><CheckCircle2 className="size-4 text-primary" />{item}</li>)}</ul></article></div><AiChat /></section>
+  <section className="rounded-2xl border border-amber-300/40 bg-amber-50 p-5 text-sm text-amber-950"><strong>Demo data notice.</strong> Figures, statuses, and journeys on this dashboard are for product demonstration only. Do not use them to make financial, legal, or identity decisions.</section></div>;
 }

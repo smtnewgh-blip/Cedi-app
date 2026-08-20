@@ -145,14 +145,9 @@ git push origin main
 3. You should see a verification email
 
 ### Test AI Chat
-1. Make a POST request to `/api/ai/chat`:
-```bash
-curl -X POST http://localhost:3000/api/ai/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello, how are you?"}'
-```
-
-2. You should get an AI response
+1. Sign in first. The `/api/ai/chat` route requires a valid authenticated Supabase session.
+2. From the signed-in application, send a message with 1–2,000 characters.
+3. Confirm the route returns an AI response. Unauthenticated requests should return `401`, and malformed or oversized messages should return `400`.
 
 ### Test Theme Switcher
 1. Click the moon/sun icon
